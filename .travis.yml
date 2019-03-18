@@ -1,26 +1,21 @@
 language: node_js
-
 node_js: lts/*
-
 cache:
   directories:
-    - node_modules
-
+  - node_modules
 branches:
   only:
   - master
 before_install:
-- openssl aes-256-cbc -K $encrypted_80b769817dc1_key -iv $encrypted_80b769817dc1_iv
-  -in .travis/blog.enc -out ~/.ssh/id_rsa -d
+- openssl aes-256-cbc -K $encrypted_7e0ee10d835a_key -iv $encrypted_7e0ee10d835a_iv
+  -in xgo-engineering-blog.enc -out ~/.ssh/id_rsa -d
 - chmod 600 ~/.ssh/id_rsa
 - eval $(ssh-agent)
 - ssh-add ~/.ssh/id_rsa
 - cp .travis/ssh_config ~/.ssh/config
 - git config --global user.name "cielpy"
 - git config --global user.email "beijiu572@gmail.com"
-
-- git clone https://github.com/cielpy/hexo-theme-even.git themes/hexo-theme-even
-
+- git clone https://github.com/xgoteam/hexo-theme-even.git themes/hexo-theme-even
 - npm install -g hexo-cli
 install:
 - npm install
