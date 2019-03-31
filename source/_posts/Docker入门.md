@@ -159,22 +159,7 @@ image 文件是通用的，一台机器的 image 文件拷贝到另一台机器�
 
 下面，我们通过最简单的 image 文件"[hello world"](https://hub.docker.com/r/library/hello-world/)，感受一下 Docker。
 
-需要说明的是，国内连接 Docker 的官方仓库很慢，还会断线，需要将默认仓库改成国内的镜像网站，具体的修改方法:
-
-打开`/etc/default/docker`文件（需要`sudo`权限），在文件的底部加上一行。
-
-> ```bash
->
-> DOCKER_OPTS="--registry-mirror=https://registry.docker-cn.com"
->
-> ```
-
-然后，重启 Docker 服务。
-
-> ```bash
->
-> $ sudo service docker restart
-> ```
+需要说明的是，国内连接 Docker 的官方仓库很慢，还会断线，需要将默认仓库改成国内的镜像网站，具体的修改方法
 
 
 首先，运行下面的命令，将 image 文件从仓库抓取到本地。
@@ -205,11 +190,11 @@ image 文件是通用的，一台机器的 image 文件拷贝到另一台机器�
 
 现在，运行这个 image 文件。
 
-> ```bash
->
-> $ docker container run hello-world
->
-> ```
+```bash
+
+$ docker container run hello-world
+
+```
 
 `docker container run`命令会从 image 文件，生成一个正在运行的容器实例。
 
@@ -309,15 +294,16 @@ image 文件是通用的，一台机器的 image 文件拷贝到另一台机器�
 
 然后，在项目的根目录下，新建一个文本文件 Dockerfile，写入下面的[内容](https://github.com/ruanyf/koa-demos/blob/master/Dockerfile)。
 
-> ```bash
->
-> FROM node:8.4
-> COPY . /app
-> WORKDIR /app
-> RUN npm install --registry=https://registry.npm.taobao.org
-> EXPOSE 3000
->
-> ```
+
+```bash
+
+ FROM node:8.4
+ COPY . /app
+ WORKDIR /app
+ RUN npm install --registry=https://registry.npm.taobao.org
+ EXPOSE 3000
+
+```
 
 上面代码一共五行，含义如下。
 
@@ -537,7 +523,7 @@ docker 的主要用法就是上面这些，此外还有几个命令，也非常�
 
 `docker container cp`命令用于从正在运行的 Docker 容器里面，将文件拷贝到本机。下面是拷贝到当前目录的写法。
 
-> ```bash
->
-> $ docker container cp [containID]:[/path/to/file] .
-> ```
+```bash
+
+$ docker container cp [containID]:[/path/to/file] .
+```
