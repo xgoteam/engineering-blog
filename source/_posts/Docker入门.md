@@ -159,7 +159,23 @@ image 文件是通用的，一台机器的 image 文件拷贝到另一台机器�
 
 下面，我们通过最简单的 image 文件"[hello world"](https://hub.docker.com/r/library/hello-world/)，感受一下 Docker。
 
-需要说明的是，国内连接 Docker 的官方仓库很慢，还会断线，需要将默认仓库改成国内的镜像网站，具体的修改方法在[下一篇文章](http://www.ruanyifeng.com/blog/2018/02/docker-wordpress-tutorial.html)的第一节。有需要的朋友，可以先看一下。
+需要说明的是，国内连接 Docker 的官方仓库很慢，还会断线，需要将默认仓库改成国内的镜像网站，具体的修改方法:
+
+打开`/etc/default/docker`文件（需要`sudo`权限），在文件的底部加上一行。
+
+> ```bash
+>
+> DOCKER_OPTS="--registry-mirror=https://registry.docker-cn.com"
+>
+> ```
+
+然后，重启 Docker 服务。
+
+> ```bash
+>
+> $ sudo service docker restart
+> ```
+
 
 首先，运行下面的命令，将 image 文件从仓库抓取到本地。
 
