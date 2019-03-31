@@ -4,6 +4,7 @@ categories:
   - 容器
   - 集群管理
 tags:
+  - 虚拟化
   - Kubernetes
   - 容器
 date: 2019-03-31 09:51:53
