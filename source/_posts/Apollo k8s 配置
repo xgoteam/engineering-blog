@@ -1,0 +1,98 @@
+# Apollo k8s 配置
+
+# 服务模块
+
+---
+
+![](https://www.notion.so/image/https%3A%2F%2Fs3-us-west-2.amazonaws.com%2Fsecure.notion-static.com%2Ffbd1eca3-ce03-442c-898c-88a9ebab1c32%2FApollo_(1).png?table=block&id=1a4f7127-106d-484d-b266-b5932e45b779&cache=v2)
+
+# 构建镜像
+
+---
+
+原官方仓库提供的 DockerFile 文件会有 Read-only file system 问题，详见：
+
+[https://github.com/ctripcorp/apollo/issues/1864](https://github.com/ctripcorp/apollo/issues/1864)
+
+[https://github.com/ctripcorp/apollo/issues/1491](https://github.com/ctripcorp/apollo/issues/1491)
+
+另外也需要下载 Apollo jar 包放置在 DockerFile 同级目录 build.
+
+以 build apollo-config-server image 为例, 其他类似
+
+    scripts/apollo-on-kubernetes/apollo-config-server$ tree -L 2
+    .
+    ├── apollo-configservice.conf
+    ├── apollo-configservice.jar
+    ├── config
+    │   ├── application-github.properties
+    │   └── app.properties
+    ├── Dockerfile
+    ├── entrypoint.sh
+    └── scripts
+        └── startup-kubernetes.sh
+
+build image
+
+    # 在 scripts/apollo-on-kubernetes/apollo-config-server 路径下
+    docker build -t apollo-config-server:v1.0.0 .
+
+修改的 镜像 已 push 到个人 docker registry，开箱即可食用:
+
+[https://cloud.docker.com/u/ivaners/repository/list](https://cloud.docker.com/u/ivaners/repository/list)
+
+# 初始化数据库
+
+---
+
+导入 MySQL DB SQL 文件
+
+假设只开启了 1 个 dev 环境, 在 MySQL 中导入 scripts/apollo-on-kubernetes/db/config-db-dev  以及 portal-db 目录 下的文件即可
+
+    |____config-db-dev
+    | |____apolloconfigdb.sql
+    |____config-db-prod
+    | |____apolloconfigdb.sql
+    |____config-db-test-alpha
+    | |____apolloconfigdb.sql
+    |____portal-db
+    | |____apolloportaldb.sql
+    |____config-db-test-beta
+    | |____apolloconfigdb.sql
+
+# Deploy apollo on kubernetes
+
+---
+
+官方脚本默认配置了 4 个环境, 即 dev、test-alpha、test-beta、prod
+
+在 scripts/apollo-on-kubernetes/kubernetes/kubectl-apply.sh 文件的内容按需部署 apollo 即可
+
+    scripts/apollo-on-kubernetes/kubernetes$ cat kubectl-apply.sh
+    # create namespace
+    kubectl create namespace sre
+    
+    # dev-env
+    kubectl apply -f service-mysql-for-apollo-dev-env.yaml --record && \
+    kubectl apply -f service-apollo-config-server-dev.yaml --record && \
+    kubectl apply -f service-apollo-admin-server-dev.yaml --record
+    
+    # fat-env(test-alpha-env)
+    kubectl apply -f service-mysql-for-apollo-test-alpha-env.yaml --record && \
+    kubectl apply -f service-apollo-config-server-test-alpha.yaml --record && \
+    kubectl apply -f service-apollo-admin-server-test-alpha.yaml --record
+    
+    # uat-env(test-beta-env)
+    kubectl apply -f service-mysql-for-apollo-test-beta-env.yaml --record && \
+    kubectl apply -f service-apollo-config-server-test-beta.yaml --record && \
+    kubectl apply -f service-apollo-admin-server-test-beta.yaml --record
+    
+    # prod-env
+    kubectl apply -f service-mysql-for-apollo-prod-env.yaml --record && \
+    kubectl apply -f service-apollo-config-server-prod.yaml --record && \
+    kubectl apply -f service-apollo-admin-server-prod.yaml --record
+    
+    # portal
+    kubectl apply -f service-apollo-portal-server.yaml --record
+
+具体k8s配置修改：[https://github.com/ivaners/apollo](https://github.com/ivaners/apollo)
